@@ -1,0 +1,57 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  firstName String
+  lastName  String
+  password  String
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Tax-related data
+  taxReturns TaxReturn[]
+  documents  Document[]
+
+  @@map("users")
+}
+
+model TaxReturn {
+  id        String   @id @default(cuid())
+  year      Int
+  status    String   @default("draft") // draft, filed, processed
+  data      Json?    // Store tax form data as JSON
+  userId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  documents Document[]
+
+  @@map("tax_returns")
+}
+
+model Document {
+  id          String  @id @default(cuid())
+  filename    String
+  originalName String
+  mimeType    String
+  size        Int
+  url         String?
+  userId      String
+  taxReturnId String?
+  createdAt   DateTime @default(now())
+
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  taxReturn TaxReturn? @relation(fields: [taxReturnId], references: [id], onDelete: SetNull)
+
+  @@map("documents")
+}
