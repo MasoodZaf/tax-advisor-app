@@ -38,6 +38,10 @@ AI-powered tax advisor application for web and mobile platforms.
    ```bash
    npm run setup
    ```
+   This command installs all project dependencies for the root package as well as
+   the backend and frontend applications. It also installs Jest, enabling the
+   built-in test suites. Once setup completes, you can run `npm test` from the
+   repository root to verify that everything works.
 
 3. **Set up environment variables**
    ```bash
